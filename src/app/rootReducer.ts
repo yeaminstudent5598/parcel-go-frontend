@@ -13,6 +13,6 @@ export const rootReducer = combineReducers({
   parcels: parcelsSlice,
   users: usersSlice,
   [baseApi.reducerPath]: baseApi.reducer, // RTK Query API reducer
-});
+}); 
 
 export type RootState = ReturnType<typeof rootReducer>;
