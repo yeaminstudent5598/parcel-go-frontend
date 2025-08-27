@@ -35,7 +35,7 @@ export const userApi = baseApi.injectEndpoints({
     // ADMIN: Update a user's status (block/unblock)
     updateUser: builder.mutation<IApiResponse<IUserRegister>, Partial<IUserUpdateRequest>>({
       query: (data) => ({ 
-        url: `/users/update-status/${data.id}`, 
+        url: `/users/${data.id}`,   // <-- change here
         method: "PATCH",
         body: { isBlocked: data.isBlocked } 
       }),
