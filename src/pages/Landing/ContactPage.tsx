@@ -1,3 +1,5 @@
+// src/pages/Landing/ContactPage.tsx
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +23,6 @@ const contactFormSchema = z.object({
 type ContactFormData = z.infer<typeof contactFormSchema>;
 
 const ContactPage: React.FC = () => {
-  // 2. Setup react-hook-form
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -32,23 +33,22 @@ const ContactPage: React.FC = () => {
     },
   });
 
-  // 3. Simulated submission handler
   const onSubmit = async (data: ContactFormData) => {
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-
     console.log("Form Data Submitted:", data);
     toast.success("Your message has been sent successfully!");
     form.reset();
   };
 
   return (
-    <div className="bg-slate-50">
+    <div className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
       <div className="container mx-auto px-4 py-16 lg:py-24">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Get in Touch</h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+            Get in Touch
+          </h1>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-300">
             We're here to help. Whether you have a question about our services or need support, our team is ready to answer all your questions.
           </p>
         </div>
@@ -58,37 +58,37 @@ const ContactPage: React.FC = () => {
           {/* Left Column: Contact Info */}
           <div className="space-y-8">
             <div className="flex items-start gap-4">
-              <div className="bg-blue-100 text-blue-600 p-3 rounded-lg">
+              <div className="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 p-3 rounded-lg">
                 <MapPin className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold">Our Office</h3>
-                <p className="text-slate-600">123 Delivery Lane, Gulshan-1, Dhaka-1212, Bangladesh</p>
+                <p className="text-slate-600 dark:text-slate-300">123 Delivery Lane, Gulshan-1, Dhaka-1212, Bangladesh</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <div className="bg-blue-100 text-blue-600 p-3 rounded-lg">
+              <div className="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 p-3 rounded-lg">
                 <Phone className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold">Call Us</h3>
-                <p className="text-slate-600">+880 961 2345 678</p>
+                <p className="text-slate-600 dark:text-slate-300">+880 961 2345 678</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <div className="bg-blue-100 text-blue-600 p-3 rounded-lg">
+              <div className="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 p-3 rounded-lg">
                 <Mail className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold">Email Us</h3>
-                <p className="text-slate-600">support@parcelgo.com</p>
+                <p className="text-slate-600 dark:text-slate-300">support@parcelgo.com</p>
               </div>
             </div>
           </div>
 
           {/* Right Column: Contact Form */}
           <div>
-            <Card className="shadow-lg">
+            <Card className="shadow-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100">
               <CardHeader>
                 <CardTitle>Send us a Message</CardTitle>
                 <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
