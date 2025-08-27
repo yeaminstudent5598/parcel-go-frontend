@@ -1,4 +1,4 @@
-import type { IUser } from "./user";
+
 
   export interface ILoginRequest {
     email: string;
@@ -10,10 +10,12 @@ export interface ILoginData {
     id: string;
     role: string;
     email: string;
+    phoneNumber: string; 
   };
   accessToken: string;
   refreshToken: string;
 }
+
 
 // Full API response
 export interface ILoginResponse {

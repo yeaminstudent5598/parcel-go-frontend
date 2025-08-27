@@ -1,21 +1,17 @@
-// src/redux/baseApi.ts
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000/api',
+    baseUrl: import.meta.env.VITE_BACKEND_URL, // process.env নয়
     prepareHeaders: (headers) => {
-      // 'accessToken' এর পরিবর্তে 'token' হবে, কারণ আপনি 'token' নামেই সেভ করেছেন
       const token = localStorage.getItem('token'); 
-      
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
       return headers;
     },
-    credentials: 'include', // cookies use হলে
+    credentials: 'include',
   }),
   tagTypes: ['User', 'Parcel', 'Auth'],
   endpoints: () => ({}),

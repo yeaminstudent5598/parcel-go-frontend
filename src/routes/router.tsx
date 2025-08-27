@@ -11,6 +11,9 @@ import Contact from "@/pages/Landing/Contact";
 import Home from "@/pages/Landing/Home";
 import { createBrowserRouter } from "react-router-dom";
 import { DashboardRedirect } from "@/components/roleProtection/DashboardRedirect";
+import ProfilePage from "@/pages/ProfilePage";
+import FeaturesPage from "@/pages/Landing/Features";
+import FAQPage from "@/pages/Landing/FAQ";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +25,9 @@ export const router = createBrowserRouter([
       { Component: Contact, path: "contact" },
       { Component: Register, path: "register" },
       { Component: Login, path: "login" },
+      { Component: ProfilePage, path: "profile"},
+      { Component: FeaturesPage, path: "features"},
+      { Component: FAQPage, path: "faq"},
 
       {
         path: "dashboard",

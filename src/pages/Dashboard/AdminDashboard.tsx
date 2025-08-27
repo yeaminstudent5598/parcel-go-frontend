@@ -1,5 +1,3 @@
-// D:\yeamin student\Programming hero level 2\Assignment6\ParcelGo\src\pages\Dashboard\AdminDashboard.tsx
-
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
 import {
@@ -15,7 +13,7 @@ import {
 import {
   useGetAdminStatsQuery,
   useGetAdminMonthlyTrendsQuery,
-} from "@/api/dashboardApi"; // ✅ monthly trends API এখানে
+} from "@/api/dashboardApi"; 
 import OverviewCards from "@/components/dashboard/OverviewCards";
 import { ParcelTable } from "@/components/dashboard/ParcelTable";
 import { UserTable } from "@/components/dashboard/UserTable";
@@ -45,16 +43,12 @@ import { Button } from "@/components/ui/button";
 import type { ParcelStatus } from "@/types/parcel";
 
 const AdminDashboard: React.FC = () => {
-  // States for Parcel Table
   const [parcelPage, setParcelPage] = useState(1);
   const [parcelSearchTerm, setParcelSearchTerm] = useState("");
   const [parcelStatusFilter, setParcelStatusFilter] = useState("");
-
-  // States for User Table
   const [userPage, setUserPage] = useState(1);
   const [userSearchTerm, setUserSearchTerm] = useState("");
 
-  // API Hooks
   const { data: parcelsResponse, isLoading: parcelsLoading } =
     useGetAllParcelsQuery({
       page: parcelPage,
@@ -81,7 +75,6 @@ const AdminDashboard: React.FC = () => {
   const [unblockParcel] = useUnblockParcelMutation();
   const [updateUser] = useUpdateUserMutation();
 
-  // Handler Functions
   const handleUpdateStatus = (id: string, newStatus: ParcelStatus) => {
     updateParcelStatus({ id, status: newStatus })
       .unwrap()
@@ -109,7 +102,6 @@ const AdminDashboard: React.FC = () => {
       .catch((err) => toast.error(err.data?.message || "Action failed"));
   };
 
-  // Memoized Data
   const allParcels = parcelsResponse?.data || [];
   const parcelMeta = parcelsResponse?.meta;
   const allUsers = usersResponse?.data || [];
@@ -129,28 +121,21 @@ const AdminDashboard: React.FC = () => {
   }, [statsResponse]);
 
   const monthlyTrendsData = trendsResponse?.data || [];
-
   const isLoading =
     parcelsLoading || usersLoading || statsLoading || trendsLoading;
 
   return (
     <div className="p-4 md:p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
       </div>
 
-      {/* Overview Cards */}
-      <div className="">
-        <OverviewCards stats={cardStats} isLoading={isLoading} />
-      </div>
+      <OverviewCards stats={cardStats} isLoading={isLoading} />
 
-      {/* Monthly Trends Chart */}
       <div className="grid gap-6">
         <AdminBarChart data={monthlyTrendsData} />
       </div>
 
-      {/* Tabs: Parcels & Users */}
       <Tabs defaultValue="parcels" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="parcels">Manage Parcels</TabsTrigger>
@@ -159,11 +144,12 @@ const AdminDashboard: React.FC = () => {
 
         {/* Parcels Tab */}
         <TabsContent value="parcels">
-          <Card>
+          <Card id="parcel-table-card">
             <CardHeader>
               <CardTitle>All Parcels</CardTitle>
               <div className="flex flex-col md:flex-row md:items-center gap-4 pt-4">
                 <Input
+                  id="parcel-search-input"
                   placeholder="Search parcels..."
                   value={parcelSearchTerm}
                   onChange={(e) => setParcelSearchTerm(e.target.value)}
@@ -175,7 +161,7 @@ const AdminDashboard: React.FC = () => {
                     setParcelStatusFilter(value === "all" ? "" : value)
                   }
                 >
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger id="parcel-status-filter" className="w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>

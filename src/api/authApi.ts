@@ -23,8 +23,25 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
       }),
     }),
+    resetPassword: builder.mutation<{ message: string }, { oldPassword: string; newPassword: string }>({
+      query: (data) => ({
+        url: "/auth/reset-password",
+        method: "PATCH",
+        body: data,
+      }),
+    }),
+    updateProfile: builder.mutation<
+      { message: string; user: { name: string; phoneNumber: string } },
+      { name?: string; phoneNumber?: string }
+    >({
+      query: (data) => ({
+        url: "/auth/update-profile",
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } = authApi;
+export const { useLoginMutation, useResetPasswordMutation, useRegisterMutation, useLogoutMutation, useUpdateProfileMutation } = authApi;

@@ -52,7 +52,7 @@ export function LoginForm() {
         toast.error("Login failed: invalid server response");
         return;
       }
-
+localStorage.removeItem("parcelgo_tour_completed");
       // Redux এ পাঠানো payload — authSlice পরিবর্তন না করে কাজ করবে (তোমার authSlice expects {user, token, refreshToken})
       dispatch(
         setCredentials({

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { useGetIncomingParcelsQuery, useConfirmDeliveryMutation, useGetReceiverStatsQuery } from "@/api/parcelApi";

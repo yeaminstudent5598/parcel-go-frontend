@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Search, FileText, Package, Truck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import riderImage from '../../assets/images/rider.svg'
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ const HomePage: React.FC = () => {
             </div>
             {/* Right Column: Image */}
             <div className=" lg:flex justify-center">
-              <img src="src/assets/images/rider.svg" alt="rider" />
+              <img src={riderImage} alt="rider" />
             </div>
           </div>
         </section>

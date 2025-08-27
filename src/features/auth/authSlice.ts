@@ -45,6 +45,7 @@ const authSlice = createSlice({
       state.token = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
+      localStorage.removeItem('parcelgo_tour_completed');
 
       // Remove from localStorage
       localStorage.removeItem("user");
