@@ -9,7 +9,7 @@ export default function Register() {
       {/* Left side image */}
       <div className="relative hidden lg:block">
         <img
-          src="/images/register-bg.jpg" // এখানে তোমার ইমেজ path দাও
+          src="src/assets/images/png.png" // এখানে তোমার ইমেজ path দাও
           alt="Register background"
           className="absolute inset-0 h-full w-full object-cover brightness-90"
         />
