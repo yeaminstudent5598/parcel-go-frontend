@@ -1,5 +1,5 @@
 // src/features/parcels/ParcelList.tsx
-import React from "react";
+import React from "react"; 
 import { useSelector } from "react-redux";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 // import { useNavigate } from "react-router-dom";
