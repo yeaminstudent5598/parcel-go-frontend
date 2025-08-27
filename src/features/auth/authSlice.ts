@@ -3,7 +3,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { ILoginResponse } from "@/types/auth";
 
 interface AuthState {
-  user: ILoginResponse["user"] | null;
+  user: ILoginResponse | null;
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
@@ -21,7 +21,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action: PayloadAction<ILoginResponse>) => {
-      state.user = action.payload.user;
+      state.user = action.payload.user || null;
       state.token = action.payload.token || null;
       state.refreshToken = action.payload.refreshToken || null;
       state.isAuthenticated = true;

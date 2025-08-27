@@ -1,13 +1,13 @@
 
 
-export interface  IUserRegister {
+export interface  IUser {
   _id: string;            
   email: string;
-  name: string;
+  name?: string;
   phoneNumber: string;
   password?: string;       
   role: 'ADMIN' | 'SENDER' | 'RECEIVER';
-  isBlocked?: 'BLOCKED' |'UNBLOCKED';
+  isBlocked?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

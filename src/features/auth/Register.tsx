@@ -2,15 +2,17 @@
 import { Link } from "react-router-dom";
 import { RegisterForm } from "./RegisterForm";
 import { ArrowLeft } from "lucide-react";
+import registerAnimation from "../../assets/Animation.json";
+import Lottie from "lottie-react"
 
 export default function Register() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Left side image */}
       <div className="relative hidden lg:block">
-        <img
-          src="src/assets/images/png.png" // এখানে তোমার ইমেজ path দাও
-          alt="Register background"
+        <Lottie
+          animationData={registerAnimation}
+          loop={true}
           className="absolute inset-0 h-full w-full object-cover brightness-90"
         />
       </div>
