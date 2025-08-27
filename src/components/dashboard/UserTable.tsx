@@ -2,10 +2,10 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import type { IUserRegister } from '@/types/user';
+import type { IUser } from '@/types/user';
 
 interface UserTableProps {
-  users: IUserRegister[];
+  users: IUser[];
   onBlock: (id: string, isBlocked: boolean) => void;
 }
 

@@ -1,26 +1,27 @@
-import type { IUserRegister } from "./user";
+import type { IUser } from "./user";
 
   export interface ILoginRequest {
     email: string;
     password: string;
   }
 
-  export interface ILoginData {
-  user: IUserRegister;
-  token: string;
+export interface ILoginData {
+  user: {
+    id: string;
+    role: string;
+    email: string;
+  };
+  accessToken: string;
   refreshToken: string;
 }
 
-  // src/api/authApi.ts - সঠিক টাইপ
-  export interface ILoginResponse {
-    statusCode: number;
-    success: boolean;
-    message: string;
-    user: string;
-   token: string;
-    refreshToken: string;
-
-  }
+// Full API response
+export interface ILoginResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: ILoginData; // এখানে data আছে
+}
 
   export interface IRegisterRequest {
     name: string;

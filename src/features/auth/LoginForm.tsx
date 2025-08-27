@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/features/auth/LoginForm.tsx
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,12 +11,12 @@ import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "@/api/authApi";
 import Password from "@/components/Password";
 import { toast } from "sonner";
+import type { ILoginResponse, ILoginData } from "@/types/auth";
 
 const loginSchema = z.object({
-  email: z.email("Invalid email address"),
+  email: z.email() ? (z as any).email("Invalid email address") : z.string().email("Invalid email address"),
   password: z.string().min(8, "Password too short"),
 });
-
 
 export function LoginForm() {
   const [loginUser, { isLoading }] = useLoginMutation();
@@ -26,29 +28,44 @@ export function LoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
-// D:\...\src\features\auth\LoginForm.tsx
+  // Type-guard: দেখে নিই result পুরো response নাকি শুধু data
+  const isFullResponse = (r: any): r is ILoginResponse => {
+    return !!r && typeof r === "object" && ("statusCode" in r || "success" in r) && "data" in r;
+  };
 
-const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-  try {
-    const result = await loginUser(data).unwrap();
-    console.log("API Response:", result); // ডিবাগিং এর জন্য এটি রাখতে পারেন
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    try {
+      const result = await loginUser(data).unwrap();
+      console.log("API Response:", result);
 
-    // রেসপন্স থেকে success এবং data আছে কিনা চেক করুন
-    if (result.success && result.data) {
-      // 1. Redux state এ সঠিক ডেটা সেভ করুন
+      // যদি API ইতোমধ্যে .data-কে সরিয়ে দিয়ে দেয় (i.e. endpoint returns ILoginData),
+      // তখন result নিজেই data হবে। নইলে result.data ব্যবহার করবো।
+      const payload: ILoginData | null = isFullResponse(result) ? result.data : (result as ILoginData);
+
+      // যদি wrapper দিয়ে আসে এবং success=false হলে রিটার্ন করো
+      if (isFullResponse(result) && result.success === false) {
+        toast.error(result.message || "Login failed");
+        return;
+      }
+
+      if (!payload || !payload.user) {
+        toast.error("Login failed: invalid server response");
+        return;
+      }
+
+      // Redux এ পাঠানো payload — authSlice পরিবর্তন না করে কাজ করবে (তোমার authSlice expects {user, token, refreshToken})
       dispatch(
         setCredentials({
-          user: result.data.user,
-          token: result.data.accessToken, // 'result.token' এর বদলে 'result.data.accessToken'
-          refreshToken: result.data.refreshToken,
+          user: payload.user,
+          token: payload.accessToken,
+          refreshToken: payload.refreshToken,
         })
       );
 
-      // 2. সফল বার্তা দেখান
       toast.success("Login successful!");
 
-      // 3. Role অনুযায়ী Redirect করুন
-      switch (result.data.user.role) { // 'result.user.role' এর বদলে 'result.data.user.role'
+      // রোল অনুযায়ী রিডায়রেক্ট
+      switch (payload.user.role) {
         case "SENDER":
           navigate("/dashboard/sender");
           break;
@@ -60,30 +77,19 @@ const onSubmit = async (data: z.infer<typeof loginSchema>) => {
           break;
         default:
           navigate("/");
-          break;
       }
-    } else {
-      // যদি success: false আসে বা data না থাকে
-      toast.error(result.message || "Login failed due to an unexpected response.");
+    } catch (error) {
+      // prettier error handling
+      const errMsg =
+        (error as any)?.data?.message || (error as any)?.message || "Login failed. Check credentials.";
+      toast.error(errMsg);
     }
-  } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const errMsg = (error as any)?.data?.message || "Login failed. Check credentials.";
-    toast.error(errMsg);
-  }
-};
+  };
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 w-full max-w-sm mx-auto"
-    >
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-sm mx-auto">
       <div>
-        <Input
-          placeholder="Email"
-          {...form.register("email")}
-          disabled={isLoading}
-        />
+        <Input placeholder="Email" {...form.register("email")} disabled={isLoading} />
       </div>
       <div>
         <Password {...form.register("password")} />

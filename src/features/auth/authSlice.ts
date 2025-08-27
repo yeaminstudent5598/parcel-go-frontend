@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/features/auth/authSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ILoginResponse } from "@/types/auth";
+
+// 👉 LoginForm থেকে যেটা পাঠানো হয় সেটার জন্য আলাদা payload টাইপ
+interface AuthPayload {
+  user: any;
+  token: string;
+  refreshToken: string;
+}
 
 interface AuthState {
-  user: ILoginResponse | null;
+  // আগে ছিল ILoginResponse | null — সেটাই মিসম্যাচ করছিল
+  user: any | null;
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
@@ -20,7 +28,8 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<ILoginResponse>) => {
+    // 👉 এখানে payload টাইপ বদলানো হলো: ILoginResponse → AuthPayload
+    setCredentials: (state, action: PayloadAction<AuthPayload>) => {
       state.user = action.payload.user || null;
       state.token = action.payload.token || null;
       state.refreshToken = action.payload.refreshToken || null;

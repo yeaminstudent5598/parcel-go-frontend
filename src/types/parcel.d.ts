@@ -1,4 +1,4 @@
-import type { IUserRegister } from "./user";
+import type { IUser } from "./user";
 
 // ব্যাকএন্ডের ParcelStatus টাইপের সাথে মিল রেখে
 export type ParcelStatus =
@@ -22,8 +22,8 @@ export interface IStatusLog {
 // ব্যাকএন্ডের IParcel-এর সাথে মিল রেখে আপডেট করা হয়েছে
 export interface IParcel {
   _id: string; // .id এর পরিবর্তে ._id
-  sender: IUserRegister | string;    // populated হলে IUser, নাহলে string
-  receiver: IUserRegister | string;  // populated হলে IUser, নাহলে string
+  sender: IUser | string;    // populated হলে IUser, নাহলে string
+  receiver: IUser | string;  // populated হলে IUser, নাহলে string
   deliveryAddress: string;
   pickupAddress?: string;
   weight: number;
@@ -54,6 +54,11 @@ export interface IParcelUpdateRequest {
   status?: ParcelStatus;
 }
 
+export interface IMeta {
+  total: number;
+  page: number;
+  limit: number;
+}
 // API রেসপন্সের জন্য একটি সাধারণ টাইপ
 export interface IApiResponse<T> {
   success: boolean;

@@ -77,7 +77,7 @@ export function RegisterForm({ className, ...props }: React.HTMLAttributes<HTMLD
       dispatch(
         setCredentials({
           user: result.user,
-          token: result.token,
+          token: result.accessToken,
           refreshToken: result.refreshToken,
         })
       );

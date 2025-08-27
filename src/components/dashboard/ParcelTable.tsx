@@ -69,7 +69,7 @@ export const ParcelTable: React.FC<ParcelTableProps> = ({
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [page, setPage] = useState(1);
-  const pageSize = 5; // প্রতি পেজে কতগুলো parcel দেখাবো
+  const pageSize = 5;
 
   // 👉 Filtered & searched parcels
   const filteredParcels = useMemo(() => {
@@ -79,7 +79,7 @@ export const ParcelTable: React.FC<ParcelTableProps> = ({
         if (search && !p.trackingId.toLowerCase().includes(search.toLowerCase())) return false;
         return true;
       })
-      .sort((a, b) => b.trackingId.localeCompare(a.trackingId)); // optional: sort latest first
+      .sort((a, b) => b.trackingId.localeCompare(a.trackingId));
   }, [parcels, search, statusFilter]);
 
   // 👉 Pagination
@@ -135,8 +135,12 @@ export const ParcelTable: React.FC<ParcelTableProps> = ({
               paginatedParcels.map((parcel) => (
                 <TableRow key={parcel._id}>
                   <TableCell className="font-medium">{parcel.trackingId}</TableCell>
-                  <TableCell>{parcel.sender?.name || "N/A"}</TableCell>
-                  <TableCell>{parcel.receiver?.name || "N/A"}</TableCell>
+                  <TableCell>
+                    {typeof parcel.sender === "object" ? parcel.sender.name : "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    {typeof parcel.receiver === "object" ? parcel.receiver.name : "N/A"}
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={parcel.status} />
                   </TableCell>

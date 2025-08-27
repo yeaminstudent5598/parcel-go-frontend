@@ -1,9 +1,9 @@
 // src/features/users/userSlice.ts
-import type { IUserRegister } from "@/types/user";
+import type { IUser } from "@/types/user";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UsersState {
-  users: IUserRegister[];
+  users: IUser[];
 }
 
 const initialState: UsersState = {
@@ -14,13 +14,13 @@ const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    setUsers: (state, action: PayloadAction<IUserRegister[]>) => {
+    setUsers: (state, action: PayloadAction<IUser[]>) => {
       state.users = action.payload;
     },
-    addUser: (state, action: PayloadAction<IUserRegister>) => {
+    addUser: (state, action: PayloadAction<IUser>) => {
       state.users.push(action.payload);
     },
-    updateUser: (state, action: PayloadAction<IUserRegister>) => {
+    updateUser: (state, action: PayloadAction<IUser>) => {
       const index = state.users.findIndex(user => user._id === action.payload._id);
       if (index !== -1) {
         state.users[index] = action.payload;

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { RootState } from "@/app/store";
-import type { IUserRegister } from "@/types/user";
+import type { IUser } from "@/types/user";
 
 const UserList: React.FC = () => {
   const users = useSelector((state: RootState) => state.users.users);
@@ -13,7 +13,7 @@ const UserList: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto mt-10 space-y-4">
-      {users.map((user: IUserRegister) => (
+      {users.map((user: IUser) => (
         <Card key={user._id} className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex justify-between items-center">
             <CardTitle>{user.name}</CardTitle>

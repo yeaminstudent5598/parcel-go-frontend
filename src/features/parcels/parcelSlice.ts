@@ -25,11 +25,11 @@ const parcelSlice = createSlice({
       state.parcels.push(action.payload);
     },
     updateParcel: (state, action: PayloadAction<IParcel>) => {
-      const index = state.parcels.findIndex(p => p.id === action.payload.id);
+      const index = state.parcels.findIndex(p => p._id === action.payload._id);
       if (index !== -1) state.parcels[index] = action.payload;
     },
     removeParcel: (state, action: PayloadAction<string>) => {
-      state.parcels = state.parcels.filter(p => p.id !== action.payload);
+      state.parcels = state.parcels.filter(p => p._id !== action.payload);
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

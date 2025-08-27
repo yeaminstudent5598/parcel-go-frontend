@@ -18,7 +18,7 @@ const ParcelDetails: React.FC<ParcelDetailsProps> = () => {
   const [parcel, setParcel] = useState<typeof parcels[0] | null>(null);
 
   useEffect(() => {
-    const foundParcel = parcels.find((p) => p.id === id);
+    const foundParcel = parcels.find((p) => p._id === id);
     if (foundParcel) {
       setParcel(foundParcel);
     } else {
@@ -35,15 +35,28 @@ const ParcelDetails: React.FC<ParcelDetailsProps> = () => {
       <Card>
         <CardHeader>
           <CardTitle>Parcel Details</CardTitle>
-          <CardDescription>Tracking Number: {parcel.trackingNumber}</CardDescription>
+          <CardDescription>Tracking Number: {parcel.trackingId}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
-          <div><strong>Sender:</strong> {parcel.senderName}</div>
-          <div><strong>Receiver:</strong> {parcel.receiverName}</div>
-          <div><strong>Origin:</strong> {parcel.origin}</div>
-          <div><strong>Destination:</strong> {parcel.destination}</div>
-          <div><strong>Status:</strong> {parcel.status}</div>
+          <div>
+            <strong>Sender:</strong>{" "}
+            {typeof parcel.sender === "object" ? parcel.sender.name : parcel.sender}
+          </div>
+          <div>
+            <strong>Receiver:</strong>{" "}
+            {typeof parcel.receiver === "object" ? parcel.receiver.name : parcel.receiver}
+          </div>
+          <div>
+            <strong>Origin:</strong> {parcel.pickupAddress || "N/A"}
+          </div>
+          <div>
+            <strong>Destination:</strong> {parcel.deliveryAddress}
+          </div>
+          <div>
+            <strong>Status:</strong> {parcel.status}
+          </div>
         </CardContent>
+
       </Card>
       <Button onClick={() => toast.success("Feature coming soon!")}>Update Status</Button>
     </div>

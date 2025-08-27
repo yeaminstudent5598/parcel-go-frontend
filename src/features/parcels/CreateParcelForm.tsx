@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/features/parcels/CreateParcelForm.tsx
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";

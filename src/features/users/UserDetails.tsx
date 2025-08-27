@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { RootState } from "@/app/store";
-import type { IUserRegister } from "@/types/user";
+import type { IUser } from "@/types/user";
 
 const UserDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +13,7 @@ const UserDetails: React.FC = () => {
 
   // Get user from Redux store
   const user = useSelector((state: RootState) =>
-    state.users.users.find((u: IUserRegister) => u._id === id)
+    state.users.users.find((u: IUser) => u._id === id)
   );
 
   if (!user) {
