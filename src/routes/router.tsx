@@ -25,6 +25,10 @@ import DistrictsPage from "@/pages/Landing/DistrictsPage";
 import AllServices from "@/pages/Landing/AllServices";
 import Terms from "@/pages/Landing/Terms";
 import Privacy from "@/pages/Landing/Privacy";
+import CalculateRate from "@/pages/Landing/CalculateRate";
+import GlobalShippingPolicy from "@/pages/Landing/GlobalShippingPolicy";
+import CompanyOverview from "@/pages/Landing/CompanyOverview";
+import ManageUsers from "@/pages/Dashboard/Admin/ManageUsers";
 
 export const router = createBrowserRouter([
   // ১. পাবলিক ল্যান্ডিং পেজ (Navbar + Footer থাকবে)
@@ -51,6 +55,18 @@ export const router = createBrowserRouter([
       },
       { path: "terms", element: <Terms /> }, // ✅ Terms রাউট যোগ হলো
       { path: "privacy", element: <Privacy /> },
+      {
+          path: "calculate-rate",
+          element: <CalculateRate />,
+       },
+       {
+          path: "global-policy",
+          element: <GlobalShippingPolicy />,
+        },
+        {
+          path: "company",
+          element: <CompanyOverview />,
+        },
     ],
   },
 
@@ -84,6 +100,14 @@ export const router = createBrowserRouter([
           </RoleProtected>
         ),
       },
+     {
+          path: "admin/users", // এটি মূলত ড্যাশবোর্ড পাথের চাইল্ড
+          element:  (
+          <RoleProtected allowedRoles={["ADMIN"]}>
+            <ManageUsers />
+          </RoleProtected>
+        ),
+        },
 
       // Sender Routes
       {
