@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { 
-  Search, Truck, ShieldCheck, Globe, Star, 
+  Truck, ShieldCheck, Globe, Star, 
   Download, PackageCheck, Zap, BarChart3, 
   Users, MapPin, Mail, ChevronRight, Activity, Smartphone,
   HelpCircle, ShieldAlert, Award, Headphones, Plane, Briefcase
