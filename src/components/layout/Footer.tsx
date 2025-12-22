@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { 
   Facebook, Twitter, Instagram, Github, Linkedin, 
-  Mail, MapPin, Phone, Truck, ChevronRight, 
+  Mail, MapPin, Phone, ChevronRight, 
   ShieldCheck, Globe2, Activity 
 } from "lucide-react";
 import logo from "@/assets/logo/logo.png";
