@@ -1,5 +1,4 @@
-import React from 'react';
-import { Globe2, Plane, ShieldCheck, FileText, BadgeCheck, Zap, Info, ArrowRight, Anchor } from 'lucide-react';
+import { Globe2, Plane, ShieldCheck, FileText, Info, ArrowRight, Anchor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
