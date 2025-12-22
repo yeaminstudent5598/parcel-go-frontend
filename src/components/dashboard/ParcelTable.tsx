@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { MoreHorizontal, PackageOpen, Plus, Eye, XCircle, CheckCircle, RefreshCcw, ShieldAlert } from "lucide-react";
+import { MoreHorizontal, Plus, Eye, XCircle, CheckCircle, RefreshCcw, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
