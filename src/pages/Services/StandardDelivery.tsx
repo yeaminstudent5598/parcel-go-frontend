@@ -1,5 +1,4 @@
-import React from 'react';
-import { Truck, CheckCircle2, Clock, MapPin, Shield, ArrowRight, Wallet, PackageCheck, Headphones } from 'lucide-react';
+import { Truck, CheckCircle2, MapPin, Shield, PackageCheck, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
