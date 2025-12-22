@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/baseApi";
 import type { IApiResponse } from "@/types/parcel";
 import type { IUser, IUserUpdateRequest } from "@/types/user";
@@ -17,13 +18,17 @@ export const userApi = baseApi.injectEndpoints({
       },
       providesTags: (result) =>
         result?.data
-          ? [...result.data.map(({ _id }) => ({ type: 'User' as const, id: _id })), { type: 'User', id: 'LIST' }]
+          ? [
+              ...result.data.map(({ _id }) => ({ type: 'User' as const, id: _id })),
+              { type: 'User', id: 'LIST' }
+            ]
           : [{ type: 'User', id: 'LIST' }],
     }),
 
     // SENDER: Get all receivers to select from
     getReceivers: builder.query<IApiResponse<IUser[]>, void>({
       query: () => ({ url: "/users/receivers", method: "GET" }),
+      providesTags: [{ type: 'User', id: 'LIST' }],
     }),
 
     // ADMIN: Get a single user by ID
@@ -35,18 +40,32 @@ export const userApi = baseApi.injectEndpoints({
     // ADMIN: Update a user's status (block/unblock)
     updateUser: builder.mutation<IApiResponse<IUser>, Partial<IUserUpdateRequest>>({
       query: (data) => ({ 
-        url: `/users/${data.id}`,   // <-- change here
+        url: `/users/${data.id}`, 
         method: "PATCH",
         body: { isBlocked: data.isBlocked } 
       }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: 'User', id }, { type: 'User', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'User', id }, 
+        { type: 'User', id: 'LIST' }
+      ],
+    }),
+
+    // ✅ সমাধান: Delete User মিউটেশন যোগ করা হয়েছে
+    deleteUser: builder.mutation<IApiResponse<any>, string>({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: 'User', id: 'LIST' }],
     }),
   }),
 });
 
+// ✅ সব হুক এক্সপোর্ট করা হয়েছে
 export const {
   useGetUsersQuery,
   useGetReceiversQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,
+  useDeleteUserMutation, // এখন এটি কাজ করবে
 } = userApi;
