@@ -1,5 +1,4 @@
-import React from 'react';
-import { Zap, Timer, ArrowRight, ShieldCheck, Crown, Rocket, Bell, HeadphonesIcon, CreditCard } from 'lucide-react';
+import { Zap, Timer, Crown, Rocket, Bell, HeadphonesIcon, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
