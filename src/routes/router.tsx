@@ -23,6 +23,8 @@ import ExpressPlus from "@/pages/Services/ExpressPlus";
 import GlobalShipping from "@/pages/Services/GlobalShipping";
 import DistrictsPage from "@/pages/Landing/DistrictsPage";
 import AllServices from "@/pages/Landing/AllServices";
+import Terms from "@/pages/Landing/Terms";
+import Privacy from "@/pages/Landing/Privacy";
 
 export const router = createBrowserRouter([
   // ১. পাবলিক ল্যান্ডিং পেজ (Navbar + Footer থাকবে)
@@ -47,6 +49,8 @@ export const router = createBrowserRouter([
         path: "services",
         element: <AllServices />,
       },
+      { path: "terms", element: <Terms /> }, // ✅ Terms রাউট যোগ হলো
+      { path: "privacy", element: <Privacy /> },
     ],
   },
 
