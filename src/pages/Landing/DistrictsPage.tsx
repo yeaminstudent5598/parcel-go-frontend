@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { 
-  MapPin, Info, Search, Truck, 
-  ShieldCheck, Globe2, ChevronRight 
+  MapPin, Search,
+  Globe2, ChevronRight 
 } from 'lucide-react';
 
 // ✅ এই লাইনটিই হলো এরর সমাধানের মূল চাবিকাঠি
