@@ -202,10 +202,10 @@ const HomePage: React.FC = () => {
       <section className="py-32 container mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} className="relative">
            <img 
-  src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&q=80&w=1200" 
-  alt="B2B Merchant" 
-  className="rounded-[4rem] border-8 border-slate-50 shadow-2xl" 
-/>
+              src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&q=80&w=1200" 
+              alt="B2B Merchant" 
+              className="rounded-[4rem] border-8 border-slate-50 shadow-2xl" 
+            />
            <div className="absolute -bottom-8 -right-8 bg-blue-600 text-white p-10 rounded-[3rem] shadow-2xl">
               <BarChart3 size={40} />
               <p className="mt-4 font-black text-2xl">200%</p>
