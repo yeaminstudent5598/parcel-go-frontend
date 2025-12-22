@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { 
   Rocket, ShieldCheck, HeartHandshake, Users, 
   Target, Award, Globe2, Zap, ArrowRight,
-  Facebook, Twitter, Linkedin, Github
+   Twitter, Linkedin
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
