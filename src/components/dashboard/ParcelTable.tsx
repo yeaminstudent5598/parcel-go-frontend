@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from "react";
-import { MoreHorizontal, Search } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
+import { MoreHorizontal, PackageOpen, Plus, Eye, XCircle, CheckCircle, RefreshCcw, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,193 +10,139 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { IParcel, ParcelStatus } from "@/types/parcel";
 
 interface ParcelTableProps {
   parcels: IParcel[];
+  isLoading?: boolean;
   title?: string;
   description?: string;
   onViewDetails?: (id: string) => void;
   onCancel?: (id: string) => void;
   onConfirm?: (id: string) => void;
   onUpdateStatus?: (id: string, newStatus: ParcelStatus) => void;
-  onBlock?: (id: string, isBlocked: boolean) => void;
+  onBlock?: (id: string) => void;
 }
 
-// Status badge
 const StatusBadge = ({ status }: { status: string }) => {
-  const statusUpper = status.toUpperCase();
-  let variant: "default" | "secondary" | "destructive" | "outline" = "secondary";
-
-  switch (statusUpper) {
-    case "DELIVERED":
-      variant = "default";
-      break;
-    case "CANCELLED":
-    case "BLOCKED":
-      variant = "destructive";
-      break;
-    case "REQUESTED":
-      variant = "outline";
-      break;
-    default:
-      variant = "secondary";
-  }
-
-  return <Badge variant={variant}>{statusUpper}</Badge>;
+  const s = status.toUpperCase();
+  if (s === "DELIVERED") return <Badge className="bg-green-500">DELIVERED</Badge>;
+  if (s === "CANCELLED" || s === "BLOCKED") return <Badge variant="destructive">{s}</Badge>;
+  if (s === "IN_TRANSIT" || s === "DISPATCHED") return <Badge className="bg-blue-500 animate-pulse">IN TRANSIT</Badge>;
+  if (s === "APPROVED") return <Badge className="bg-purple-500">APPROVED</Badge>;
+  return <Badge variant="secondary">{s}</Badge>;
 };
-
-// Status list
-const parcelStatuses: ParcelStatus[] = ["APPROVED", "DISPATCHED", "IN_TRANSIT", "DELIVERED", "RETURNED"];
 
 export const ParcelTable: React.FC<ParcelTableProps> = ({
   parcels,
-  title = "Parcels",
-  description = "A list of relevant parcels.",
+  isLoading = false,
+  title = "Parcel Management",
   onViewDetails,
   onCancel,
   onConfirm,
   onUpdateStatus,
   onBlock,
 }) => {
-  // 👉 Search, Filter, Pagination states
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
-  const [page, setPage] = useState(1);
-  const pageSize = 5;
-
-  // 👉 Filtered & searched parcels
-  const filteredParcels = useMemo(() => {
-    return parcels
-      .filter((p) => {
-        if (statusFilter !== "ALL" && p.status.toUpperCase() !== statusFilter) return false;
-        if (search && !p.trackingId.toLowerCase().includes(search.toLowerCase())) return false;
-        return true;
-      })
-      .sort((a, b) => b.trackingId.localeCompare(a.trackingId));
-  }, [parcels, search, statusFilter]);
-
-  // 👉 Pagination
-  const totalPages = Math.ceil(filteredParcels.length / pageSize);
-  const paginatedParcels = filteredParcels.slice((page - 1) * pageSize, page * pageSize);
+  const navigate = useNavigate();
 
   return (
-    <Card>
-      <CardHeader className="space-y-2">
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-
-        {/* Search + Filter Controls */}
-        <div className="flex flex-col md:flex-row gap-2 md:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search by Tracking ID..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All</SelectItem>
-              {parcelStatuses.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <Card className="border-none shadow-xl bg-white dark:bg-slate-950 rounded-2xl">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-2xl font-black">{title}</CardTitle>
+          <CardDescription>Manage and track shipments effectively.</CardDescription>
         </div>
+        <Button size="sm" onClick={() => navigate('/dashboard/sender/create')} className="bg-blue-600">
+           <Plus size={16} className="mr-1"/> New
+        </Button>
       </CardHeader>
-
+      
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Tracking ID</TableHead>
-              <TableHead>Sender</TableHead>
-              <TableHead>Receiver</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+            <TableRow className="bg-slate-50 dark:bg-slate-900">
+              <TableHead className="font-bold">Tracking ID</TableHead>
+              <TableHead className="font-bold">Details</TableHead>
+              <TableHead className="font-bold">Status</TableHead>
+              <TableHead className="font-bold">Price</TableHead>
+              <TableHead className="text-right font-bold">Actions</TableHead>
             </TableRow>
           </TableHeader>
+          
           <TableBody>
-            {paginatedParcels && paginatedParcels.length > 0 ? (
-              paginatedParcels.map((parcel) => (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell colSpan={5}><Skeleton className="h-12 w-full" /></TableCell>
+                </TableRow>
+              ))
+            ) : parcels.length > 0 ? (
+              parcels.map((parcel) => (
                 <TableRow key={parcel._id}>
-                  <TableCell className="font-medium">{parcel.trackingId}</TableCell>
+                  <TableCell className="font-mono font-bold text-blue-600">{parcel.trackingId}</TableCell>
                   <TableCell>
-                    {typeof parcel.sender === "object" ? parcel.sender.name : "N/A"}
+                    <div className="text-sm font-semibold">{typeof parcel.receiver === 'object' ? parcel.receiver.name : 'User'}</div>
+                    <div className="text-[10px] text-slate-500">{parcel.deliveryAddress}</div>
                   </TableCell>
-                  <TableCell>
-                    {typeof parcel.receiver === "object" ? parcel.receiver.name : "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={parcel.status} />
-                  </TableCell>
-                  <TableCell>
+                  <TableCell><StatusBadge status={parcel.status} /></TableCell>
+                  <TableCell className="font-bold">{parcel.price} BDT</TableCell>
+                  <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="icon"><MoreHorizontal size={16}/></Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        {onViewDetails && (
-                          <DropdownMenuItem onClick={() => onViewDetails(parcel._id)}>View Details</DropdownMenuItem>
-                        )}
-                        {onCancel &&
-                          (parcel.status.toUpperCase() === "REQUESTED" ||
-                            parcel.status.toUpperCase() === "APPROVED") && (
-                            <DropdownMenuItem className="text-red-600" onClick={() => onCancel(parcel._id)}>
-                              Cancel
-                            </DropdownMenuItem>
-                          )}
-                        {onConfirm &&
-                          ["DISPATCHED", "IN_TRANSIT"].includes(parcel.status.toUpperCase()) && (
-                            <DropdownMenuItem className="text-green-600" onClick={() => onConfirm(parcel._id)}>
-                              Confirm Delivery
-                            </DropdownMenuItem>
-                          )}
+                      
+                      <DropdownMenuContent align="end" className="w-56 p-2">
+                        <DropdownMenuLabel className="text-[10px] uppercase text-slate-400">Shipment Actions</DropdownMenuLabel>
+                        
+                        {/* ১. সাধারণ অপশন: সবার জন্য */}
+                        <DropdownMenuItem onClick={() => onViewDetails?.(parcel._id)}>
+                          <Eye size={14} className="mr-2" /> View Details
+                        </DropdownMenuItem>
 
-                        {onUpdateStatus && (
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                              <DropdownMenuLabel>Select New Status</DropdownMenuLabel>
-                              {parcelStatuses.map((status) => (
-                                <DropdownMenuItem
-                                  key={status}
-                                  disabled={parcel.status === status}
-                                  onClick={() => onUpdateStatus(parcel._id, status)}
-                                >
-                                  {status}
-                                </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuSubContent>
-                          </DropdownMenuSub>
-                        )}
+                        <DropdownMenuSeparator />
 
-                        {onBlock && (
-                          <DropdownMenuItem
-                            className={parcel.isBlocked ? "text-blue-600" : "text-red-600"}
-                            onClick={() => onBlock(parcel._id, !parcel.isBlocked)}
-                          >
-                            {parcel.isBlocked ? "Unblock" : "Block"}
+                        {/* ২. সেন্ডার অপশন: শুধুমাত্র REQUESTED থাকলে Cancel করা যাবে */}
+                        {onCancel && (parcel.status === "REQUESTED") && (
+                          <DropdownMenuItem className="text-red-600 font-bold" onClick={() => onCancel(parcel._id)}>
+                            <XCircle size={14} className="mr-2" /> Cancel Shipment
                           </DropdownMenuItem>
+                        )}
+
+                        {/* ৩. রিসিভার অপশন: ট্রানজিটে থাকলে Confirm করা যাবে */}
+                        {onConfirm && ["IN_TRANSIT", "DISPATCHED"].includes(parcel.status) && (
+                          <DropdownMenuItem className="text-green-600 font-bold" onClick={() => onConfirm(parcel._id)}>
+                            <CheckCircle size={14} className="mr-2" /> Confirm Received
+                          </DropdownMenuItem>
+                        )}
+
+                        {/* ৪. অ্যাডমিন অপশন: স্ট্যাটাস আপডেট */}
+                        {onUpdateStatus && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuLabel className="text-[10px] uppercase text-slate-400">Admin Controls</DropdownMenuLabel>
+                            
+                            {parcel.status === "REQUESTED" && (
+                              <DropdownMenuItem onClick={() => onUpdateStatus(parcel._id, "APPROVED")}>
+                                <RefreshCcw size={14} className="mr-2 text-purple-600" /> Approve Parcel
+                              </DropdownMenuItem>
+                            )}
+                            
+                            {["APPROVED", "DISPATCHED"].includes(parcel.status) && (
+                              <DropdownMenuItem onClick={() => onUpdateStatus(parcel._id, "IN_TRANSIT")}>
+                                <RefreshCcw size={14} className="mr-2 text-blue-600" /> Mark as In-Transit
+                              </DropdownMenuItem>
+                            )}
+
+                            <DropdownMenuItem className="text-orange-600" onClick={() => onBlock?.(parcel._id)}>
+                              <ShieldAlert size={14} className="mr-2" /> Block Shipment
+                            </DropdownMenuItem>
+                          </>
                         )}
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -202,29 +150,10 @@ export const ParcelTable: React.FC<ParcelTableProps> = ({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No parcels found.
-                </TableCell>
-              </TableRow>
+              <TableRow><TableCell colSpan={5} className="text-center py-10">No data available.</TableCell></TableRow>
             )}
           </TableBody>
         </Table>
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-between items-center mt-4">
-            <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} variant="outline" size="sm">
-              Previous
-            </Button>
-            <span className="text-sm text-gray-600">
-              Page {page} of {totalPages}
-            </span>
-            <Button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} variant="outline" size="sm">
-              Next
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

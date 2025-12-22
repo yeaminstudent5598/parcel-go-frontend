@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,16 +12,20 @@ import type { IParcel } from "@/types/parcel";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet-async";
+import { TableSkeleton } from "@/components/ui/TableSkeleton"; // ✅ Ensure this component exists
+import { Search, Filter, Plus } from "lucide-react";
 
 const SenderDashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  // State for filters and pagination
+  // --- Search, Filter & Pagination States ---
   const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  // Fetching Data with States
   const { data: parcelsResponse, isLoading: parcelsLoading, isError } = useGetMyParcelsQuery({
     page,
     limit: 5,
@@ -31,27 +36,34 @@ const SenderDashboard: React.FC = () => {
   const { data: statsResponse, isLoading: statsLoading } = useGetSenderStatsQuery();
   const [cancelParcel] = useCancelParcelMutation();
 
+  // --- Handlers ---
   const handleCancel = async (id: string) => {
-    const isConfirmed = window.confirm("Are you sure you want to cancel this parcel?");
-    if (isConfirmed) {
+    if (window.confirm("Are you sure you want to cancel this delivery request?")) {
       try {
         await cancelParcel(id).unwrap();
-        toast.success("Parcel cancelled successfully.");
+        toast.success("Parcel shipment cancelled successfully.");
       } catch (error: any) {
-        toast.error(error?.data?.message || "Failed to cancel parcel.");
+        toast.error(error?.data?.message || "Failed to cancel shipment.");
       }
     }
   };
 
-  const handleViewDetails = (id: string) => setSelectedParcelId(id);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setPage(1); // Reset to page 1 on search (Requirement: filter/search sync)
+  };
+
+  const handleStatusFilter = (val: string) => {
+    setStatusFilter(val === "all" ? "" : val);
+    setPage(1); // Reset to page 1 on filter
+  };
 
   const myParcels = parcelsResponse?.data || [];
   const totalParcels = parcelsResponse?.meta?.total || 0;
   const totalPages = Math.ceil(totalParcels / 5);
-
   const selectedParcel = myParcels.find((p: IParcel) => p._id === selectedParcelId);
 
-  // Data for OverviewCards
+  // Overview Stats Logic
   const cardStats = useMemo(() => {
     if (!statsResponse?.data) return [];
     const { totalParcels, statuses } = statsResponse.data;
@@ -63,7 +75,7 @@ const SenderDashboard: React.FC = () => {
     ];
   }, [statsResponse]);
 
-  // Data for PieChart
+  // Chart Logic
   const chartData = useMemo(() => {
     if (!statsResponse?.data?.statuses) return [];
     return Object.entries(statsResponse.data.statuses).map(([name, value]) => ({
@@ -72,53 +84,54 @@ const SenderDashboard: React.FC = () => {
     }));
   }, [statsResponse]);
 
-  const isLoading = parcelsLoading || statsLoading;
-  if (isError) return <div className="p-6 text-center text-red-500">Failed to load data.</div>;
+  if (isError) return <div className="p-20 text-center text-red-500 font-bold">Failed to load dashboard data. Please try again later.</div>;
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      {/* Guided Tour */}
+    <div className="p-4 lg:p-8 space-y-8 animate-in fade-in duration-500">
+      <Helmet>
+        <title>Dashboard | Sender | ParcelGo</title>
+      </Helmet>
+      
       <GuidedTour />
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold">Sender Dashboard</h1>
-        <Button id="create-parcel-btn" onClick={() => navigate("/dashboard/sender/create")}>
-          + Create Parcel
+      {/* --- Header Section --- */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">Sender Dashboard</h1>
+          <p className="text-slate-500 mt-1">Track and manage all your outgoing parcels from one place.</p>
+        </div>
+        <Button onClick={() => navigate("/dashboard/sender/create")} className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 dark:shadow-none h-12 px-6">
+          <Plus className="mr-2 h-5 w-5" /> Book New Parcel
         </Button>
       </div>
 
-      <OverviewCards stats={cardStats} isLoading={isLoading} />
+      {/* --- Stats Cards --- */}
+      <OverviewCards stats={cardStats} isLoading={statsLoading} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Table and Filters */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* Search input */}
-            <div id="parcel-search-input" className="w-full sm:max-w-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          
+          {/* --- Search & Filter Bar (Requirement) --- */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-white dark:bg-slate-900 p-4 rounded-xl border">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search by Tracking ID..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
+                className="pl-10 h-10"
               />
             </div>
-
-            {/* Status filter */}
-            <div id="parcel-status-filter" className="w-full sm:w-[180px]">
-              <Select
-                value={statusFilter}
-                onValueChange={(value) => {
-                  if (value === "all") setStatusFilter("");
-                  else setStatusFilter(value);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by status" />
+            <div className="flex items-center gap-3">
+              <Filter className="h-4 w-4 text-slate-400 shrink-0" />
+              <Select value={statusFilter || "all"} onValueChange={handleStatusFilter}>
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="REQUESTED">Requested</SelectItem>
                   <SelectItem value="APPROVED">Approved</SelectItem>
-                  <SelectItem value="DISPATCHED">Dispatched</SelectItem>
                   <SelectItem value="DELIVERED">Delivered</SelectItem>
                   <SelectItem value="CANCELLED">Cancelled</SelectItem>
                 </SelectContent>
@@ -126,27 +139,63 @@ const SenderDashboard: React.FC = () => {
             </div>
           </div>
 
+          {/* --- Parcel Table with SKELETON LOADER (Requirement) --- */}
           <div id="parcel-table-card">
-            <ParcelTable parcels={myParcels} onCancel={handleCancel} onViewDetails={handleViewDetails} />
+            {parcelsLoading ? (
+              <TableSkeleton rows={5} /> 
+            ) : (
+              <ParcelTable 
+                parcels={myParcels} 
+                onCancel={handleCancel} 
+                onViewDetails={(id) => setSelectedParcelId(id)} 
+              />
+            )}
           </div>
 
-          <div className="flex items-center justify-end space-x-2 pt-4">
-            <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page <= 1}>
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {page} of {totalPages > 0 ? totalPages : 1}
-            </span>
-            <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
-              Next
-            </Button>
+          {/* --- Pagination Controls (Requirement) --- */}
+          <div className="flex items-center justify-between px-2 pt-4">
+            <p className="text-sm text-slate-500 font-medium">
+              Showing page {page} of {totalPages || 1}
+            </p>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setPage(p => Math.max(1, p - 1))} 
+                disabled={page <= 1}
+                className="rounded-lg"
+              >
+                Previous
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setPage(p => p + 1)} 
+                disabled={page >= totalPages}
+                className="rounded-lg"
+              >
+                Next
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Chart and Timeline */}
-        <div className="space-y-6">
-          <StatusPieChart data={chartData} isLoading={isLoading} />
-          {selectedParcel && <StatusTimeline parcel={selectedParcel} />}
+        {/* --- Sidebar: Analytics & Timeline --- */}
+        <div className="space-y-8">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border overflow-hidden">
+            <div className="p-4 border-b bg-slate-50/50 dark:bg-slate-800/50">
+              <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500">Analytics</h3>
+            </div>
+            <div className="p-2">
+              <StatusPieChart data={chartData} isLoading={statsLoading} />
+            </div>
+          </div>
+
+          {selectedParcel && (
+             <div className="animate-in slide-in-from-right duration-500">
+                <StatusTimeline parcel={selectedParcel} />
+             </div>
+          )}
         </div>
       </div>
     </div>

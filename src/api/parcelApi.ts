@@ -9,6 +9,10 @@ interface ISuccessResponse {
 
 export const parcelApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // ==========================================
+    // PARCEL ENDPOINTS
+    // ==========================================
+
     // SENDER: Get their own parcels
     getMyParcels: builder.query<IApiResponse<IParcel[]>, { page: number; limit: number; searchTerm?: string; status?: string }>({
       query: ({ page, limit, searchTerm, status }) => {
@@ -28,7 +32,7 @@ export const parcelApi = baseApi.injectEndpoints({
       providesTags: (result) => result?.data ? [...result.data.map(({ _id }) => ({ type: 'Parcel' as const, id: _id })), { type: 'Parcel', id: 'LIST' }] : [{ type: 'Parcel', id: 'LIST' }],
     }),
 
-    // ✅ ADMIN: Get all parcels with pagination and filters
+    // ADMIN: Get all parcels with pagination and filters
     getAllParcels: builder.query<IApiResponse<IParcel[]>, { page: number; limit: number; searchTerm?: string; status?: string }>({
       query: ({ page, limit, searchTerm, status }) => {
         const params = new URLSearchParams();
@@ -41,33 +45,37 @@ export const parcelApi = baseApi.injectEndpoints({
       providesTags: (result) => result?.data ? [...result.data.map(({ _id }) => ({ type: 'Parcel' as const, id: _id })), { type: 'Parcel', id: 'LIST' }] : [{ type: 'Parcel', id: 'LIST' }],
     }),
 
-    // ✅ STATS: Hooks for all roles
-    getAdminStats: builder.query<IApiResponse<any>, void>({
-        query: () => '/dashboard/stats/admin',
-        providesTags: ['Parcel', 'User'],
-    }),
-    getSenderStats: builder.query<IApiResponse<any>, void>({
-        query: () => '/dashboard/stats/sender',
-        providesTags: ['Parcel'],
-    }),
-    getReceiverStats: builder.query<IApiResponse<any>, void>({
-        query: () => '/dashboard/stats/receiver',
-        providesTags: ['Parcel'],
-    }),
-
     // PUBLIC: Track parcel by tracking ID
     trackParcelById: builder.query<IApiResponse<IParcel>, string>({
       query: (trackingId) => ({ url: `/parcels/tracking/${trackingId}`, method: 'GET' }),
       providesTags: (result) => result?.data ? [{ type: 'Parcel', id: result.data._id }] : [],
     }),
+
+    // ২. লোকেশন আপডেট এন্ডপয়েন্ট (রাইডার বা ডেমো পারপাস)
+    updateParcelLocation: builder.mutation<IApiResponse<IParcel>, { id: string, lat: number, lng: number }>({
+      query: ({ id, ...location }) => ({
+        url: `/parcels/update-location/${id}`,
+        method: 'PATCH',
+        body: location,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Parcel', id }],
+    }),
+
+    getActiveLocations: builder.query<IApiResponse<IParcel[]>, void>({
+      query: () => ({ 
+        url: '/parcels/active-locations', 
+        method: 'GET' 
+      }),
+      providesTags: ['Parcel'],
+    }),
     
-    // Get a single parcel by its database ID
+    // Get a single parcel by database ID
     getParcelById: builder.query<IApiResponse<IParcel>, string>({
       query: (id) => ({ url: `/parcels/${id}`, method: "GET" }),
       providesTags: (result) => result?.data ? [{ type: 'Parcel', id: result.data._id }] : [],
     }),
 
-    // SENDER: Create a new parcel
+    // SENDER: Create a new parcel (Payload now includes couponCode)
     createParcel: builder.mutation<IApiResponse<IParcel>, Partial<IParcelCreateRequest>>({
       query: (data) => ({ url: "/parcels", method: "POST", body: data }),
       invalidatesTags: [{ type: 'Parcel', id: 'LIST' }],
@@ -95,20 +103,61 @@ export const parcelApi = baseApi.injectEndpoints({
       invalidatesTags: (_result, _error, { id }) => [{ type: 'Parcel', id }, { type: 'Parcel', id: 'LIST' }],
     }),
 
-    // ADMIN: Block a parcel
+    // ADMIN: Block/Unblock a parcel
     blockParcel: builder.mutation<ISuccessResponse, string>({
       query: (id) => ({ url: `/parcels/block/${id}`, method: 'PATCH' }),
       invalidatesTags: (_result, _error, id) => [{ type: 'Parcel', id }, { type: 'Parcel', id: 'LIST' }],
     }),
 
-    // ADMIN: Unblock a parcel
     unblockParcel: builder.mutation<ISuccessResponse, string>({
       query: (id) => ({ url: `/parcels/unblock/${id}`, method: 'PATCH' }),
       invalidatesTags: (_result, _error, id) => [{ type: 'Parcel', id }, { type: 'Parcel', id: 'LIST' }],
     }),
+
+    // ==========================================
+    // DASHBOARD STATS ENDPOINTS
+    // ==========================================
+
+    getAdminStats: builder.query<IApiResponse<any>, void>({
+        query: () => '/dashboard/stats/admin',
+        providesTags: ['Parcel', 'User'],
+    }),
+    getSenderStats: builder.query<IApiResponse<any>, void>({
+        query: () => '/dashboard/stats/sender',
+        providesTags: ['Parcel'],
+    }),
+    getReceiverStats: builder.query<IApiResponse<any>, void>({
+        query: () => '/dashboard/stats/receiver',
+        providesTags: ['Parcel'],
+    }),
+
+    // ==========================================
+    // COUPON ENDPOINTS (New Additions)
+    // ==========================================
+
+    // ADMIN: Get all coupons
+    getAllCoupons: builder.query<IApiResponse<any[]>, void>({
+      query: () => '/coupons',
+      providesTags: ['Parcel'], 
+    }),
+
+    // ADMIN: Create new coupon
+    createCoupon: builder.mutation<IApiResponse<any>, { code: string; discountAmount: number }>({
+      query: (data) => ({ url: '/coupons', method: 'POST', body: data }),
+      invalidatesTags: ['Parcel'],
+    }),
+
+    // SENDER: Validate a coupon code
+    validateCoupon: builder.query<IApiResponse<any>, string>({
+      query: (code) => ({
+        url: `/coupons/validate/${code}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
+// ✅ Export all hooks including the new coupon hooks
 export const {
   useGetMyParcelsQuery,
   useGetIncomingParcelsQuery,
@@ -124,4 +173,11 @@ export const {
   useUpdateParcelStatusMutation,
   useBlockParcelMutation,
   useUnblockParcelMutation,
+  // New Coupon Hooks
+  useGetAllCouponsQuery,
+  useCreateCouponMutation,
+  useValidateCouponQuery,
+  useLazyValidateCouponQuery,
+  useUpdateParcelLocationMutation,
+  useGetActiveLocationsQuery,
 } = parcelApi;

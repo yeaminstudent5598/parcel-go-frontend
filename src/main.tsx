@@ -8,17 +8,19 @@ import { store } from './app/store'
 import { Toaster } from './components/ui/sonner'
 import { loadUserFromStorage } from './features/auth/authSlice'
 import { ThemeProvider } from './components/theme-provider'
+import { HelmetProvider } from 'react-helmet-async' 
 
-// Load user from localStorage on app start
 store.dispatch(loadUserFromStorage());
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-      <Provider store={store}>
-      <RouterProvider router={router} />
-      <Toaster richColors />
-    </Provider>
-    </ThemeProvider>
+    <HelmetProvider> 
+      <ThemeProvider>
+        <Provider store={store}>
+          <RouterProvider router={router} />
+          <Toaster richColors position="top-right" />
+        </Provider>
+      </ThemeProvider>
+    </HelmetProvider>
   </StrictMode>,
 )

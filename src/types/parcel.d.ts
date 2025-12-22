@@ -22,6 +22,7 @@ export interface IStatusLog {
 // ব্যাকএন্ডের IParcel-এর সাথে মিল রেখে আপডেট করা হয়েছে
 export interface IParcel {
   _id: string; // .id এর পরিবর্তে ._id
+  sender: any;
   sender: IUser | string;    // populated হলে IUser, নাহলে string
   receiver: IUser | string;  // populated হলে IUser, নাহলে string
   deliveryAddress: string;
@@ -32,6 +33,10 @@ export interface IParcel {
   status: ParcelStatus;
   statusLogs: IStatusLog[];
   isBlocked?: boolean;
+  currentLocation?: {
+    lat: number;
+    lng: number;
+  };
   createdAt: string;
   updatedAt: string;
 }
