@@ -140,7 +140,14 @@ const Footer = () => {
         {/* --- BOTTOM BAR: LEGAL & COPYRIGHT --- */}
         <div className="py-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs font-bold text-slate-400">
-            © {new Date().getFullYear()} <span className="text-blue-600">ParcelGo Logistics Ltd.</span> All rights reserved.
+          © {new Date().getFullYear()}{" "}
+            <Link 
+              to="/company" 
+              className="text-blue-600 hover:text-blue-700 hover:underline transition-all underline-offset-4"
+            >
+              ParcelGo Logistics Ltd.
+            </Link>{" "}
+            All rights reserved.
           </p>
           <div className="flex gap-8">
             <Link to="/terms" className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest">Terms</Link>
