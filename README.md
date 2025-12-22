@@ -60,7 +60,7 @@ To run this project locally, follow these steps:
 3.  **Create an environment file:**
     Create a `.env.local` file in the root directory and add your backend API URL.
     ```
-    VITE_API_BASE_URL=http://localhost:5000/api
+    VITE_API_BASE_URL=https://assignment5-eight-nu.vercel.app/api
     ```
 
 4.  **Run the development server:**
